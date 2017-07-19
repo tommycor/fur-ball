@@ -8,7 +8,7 @@ var config = {
 	},
 
 	camera: {
-		position : new THREE.Vector3(0, 0, 100),
+		position : new THREE.Vector3(100, 100, 100),
 		target : new THREE.Vector3(0, 0, 0)
 	},
 
@@ -18,42 +18,20 @@ var config = {
 		ambient: {
 			color : 0x333333
 		},
-		spotLight: {
-			color: 0xffffff,
-			position: {
-				x: 0,
-				y: 0,
-				z: 3
-			},
-			intensity: 2.5,
-			distance: 200,
-			// angle: Math.PI * .3,
-			angle: Math.PI * 1,
-			castShadow: false
+	},
+
+	fur: {
+		number: 10,
+		length: 10,
+		width: 2,
+		segments: 3
+	},
+
+	meshes: {
+		ball: {
+			radius: 10
 		}
-	},
-
-	plane: {
-		x: 0,
-		y: 0,
-		z: 0,
-		width: 200,
-		height: 100,
-		widthSegments: 60,
-		heightSegments: 30,
-		// color: 0xffffff,
-		// emissive: 0x999999,
-		color: 0x464a6c,
-		ambient: 0x424667,
-		emissive: 0x000000,
-		emissiveIntensity: 1,
-		specular: 0x222222,
-		shininess: 3,
-	},
-
-	radiusSegments: 10,
-
-	heightSegments: 10
+	}
 }
 
 

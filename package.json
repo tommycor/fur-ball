@@ -45,7 +45,6 @@
     "three-shader-fxaa": "^5.0.2",
     "vinyl-buffer": "*",
     "vinyl-source-stream": "*",
-    "vueify": "^8.7.0",
     "watchify": "*"
   }
 }
