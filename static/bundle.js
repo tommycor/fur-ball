@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/tommy.cornilleau/Desktop/TEMP/fur-ball/node_modules/three/build/three.js":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"D:\\Documents\\git\\fur-ball\\node_modules\\three\\build\\three.js":[function(require,module,exports){
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -43300,7 +43300,7 @@
 
 })));
 
-},{}],"/Users/tommy.cornilleau/Desktop/TEMP/fur-ball/src/scripts/components/RandomPoint.js":[function(require,module,exports){
+},{}],"D:\\Documents\\git\\fur-ball\\src\\scripts\\components\\RandomPoint.js":[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -43323,9 +43323,9 @@ module.exports = (function () {
 	function RandomPoint() {
 		_classCallCheck(this, RandomPoint);
 
-		this.position = THREE.Vector3(0, 0, 0);
+		this.position = new THREE.Vector3(0, 0, 0);
 		this.length = 0;
-		this.angle = THREE.Vector2(0, 0);
+		this.angle = new THREE.Vector2(0, 0);
 		this.randomizePoint();
 	}
 
@@ -43346,9 +43346,9 @@ module.exports = (function () {
 	}, {
 		key: "normalizePoints",
 		value: function normalizePoints() {
-			this.position.x /= this.length;
-			this.position.y /= this.length;
-			this.position.z /= this.length;
+			this.position.x /= Math.sqrt(this.length);
+			this.position.y /= Math.sqrt(this.length);
+			this.position.z /= Math.sqrt(this.length);
 
 			this.position.x *= _utilsConfig2["default"].meshes.ball.radius;
 			this.position.y *= _utilsConfig2["default"].meshes.ball.radius;
@@ -43360,16 +43360,23 @@ module.exports = (function () {
 		key: "calculateAngle",
 		value: function calculateAngle() {
 			// https://www.opengl.org/discussion_boards/showthread.php/159883-converting-a-3D-vector-into-three-euler-angles
+			this.angle.y = Math.atan(this.position.y / this.position.x) + Math.PI * .5;
+			this.angle.x = Math.atan(Math.sqrt(this.position.x * this.position.x + this.position.y * this.position.y) / this.position.z);
 
-			this.angle.x = Math.atan2(this.position.y, this.position.x);
-			this.angle.y = Math.atan2(this.position.z, _utilsConfig2["default"].meshes.ball.radius);
+			// console.log( this.angle.x / Math.PI )
+			if (this.position.z < 0) {
+				// this.angle.x += Math.PI * 1;
+				this.color = 0xffffff;
+			} else {
+				this.color = 0xff0000;
+			}
 		}
 	}]);
 
 	return RandomPoint;
 })();
 
-},{"../utils/config":"/Users/tommy.cornilleau/Desktop/TEMP/fur-ball/src/scripts/utils/config.js","three":"/Users/tommy.cornilleau/Desktop/TEMP/fur-ball/node_modules/three/build/three.js"}],"/Users/tommy.cornilleau/Desktop/TEMP/fur-ball/src/scripts/components/scene.js":[function(require,module,exports){
+},{"../utils/config":"D:\\Documents\\git\\fur-ball\\src\\scripts\\utils\\config.js","three":"D:\\Documents\\git\\fur-ball\\node_modules\\three\\build\\three.js"}],"D:\\Documents\\git\\fur-ball\\src\\scripts\\components\\scene.js":[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -43402,92 +43409,111 @@ var _RandomPoint2 = _interopRequireDefault(_RandomPoint);
 
 module.exports = {
 
-	init: function init() {
-		this.render = this.render.bind(this);
-		this.onResize = this.onResize.bind(this);
-		this.onMove = this.onMove.bind(this);
-		this.onClick = this.onClick.bind(this);
+		init: function init() {
+				this.render = this.render.bind(this);
+				this.onResize = this.onResize.bind(this);
+				this.onMove = this.onMove.bind(this);
+				this.onClick = this.onClick.bind(this);
 
-		this.clock = new THREE.Clock();
-		this.cameraPos = new THREE.Vector3(_utilsConfig2['default'].camera.position.x, _utilsConfig2['default'].camera.position.y, _utilsConfig2['default'].camera.position.z);
-		this.currentCameraPos = new THREE.Vector3(this.cameraPos.x, this.cameraPos.y, this.cameraPos.z);
+				this.clock = new THREE.Clock();
+				this.cameraPos = new THREE.Vector3(_utilsConfig2['default'].camera.position.x, _utilsConfig2['default'].camera.position.y, _utilsConfig2['default'].camera.position.z);
+				this.currentCameraPos = new THREE.Vector3(this.cameraPos.x, this.cameraPos.y, this.cameraPos.z);
 
-		this.scene = new THREE.Scene();
-		this.container = _utilsConfig2['default'].canvas.element;
+				this.scene = new THREE.Scene();
+				this.container = _utilsConfig2['default'].canvas.element;
+				this.meshes = new Array();
 
-		this.camera = new THREE.PerspectiveCamera(45, this.ratio, 15, 3000);
-		this.camera.position.x = _utilsConfig2['default'].camera.position.x;
-		this.camera.position.y = _utilsConfig2['default'].camera.position.y;
-		this.camera.position.z = _utilsConfig2['default'].camera.position.z;
-		this.camera.lookAt(_utilsConfig2['default'].camera.target);
+				this.camera = new THREE.PerspectiveCamera(45, this.ratio, 15, 3000);
+				this.camera.position.x = _utilsConfig2['default'].camera.position.x;
+				this.camera.position.y = _utilsConfig2['default'].camera.position.y;
+				this.camera.position.z = _utilsConfig2['default'].camera.position.z;
+				this.camera.lookAt(_utilsConfig2['default'].camera.target);
 
-		this.createGeometries();
+				this.createGeometries();
 
-		//// ADD AXIS HELPER
-		if (_utilsConfig2['default'].axisHelper) {
-			this.axisHelper = new THREE.AxisHelper(5);
-			this.scene.add(this.axisHelper);
+				//// ADD AXIS HELPER
+				if (_utilsConfig2['default'].axisHelper) {
+						this.axisHelper = new THREE.AxisHelper(5);
+						this.scene.add(this.axisHelper);
+				}
+
+				//// RENDERER
+				this.renderer = new THREE.WebGLRenderer({ antialias: true });
+				this.renderer.setClearColor(_utilsConfig2['default'].canvas.color, 1.0);
+				this.renderer.setSize(window.innerWidth, window.innerHeight);
+
+				//// AMBIANT LIGHT
+				this.ambient = new THREE.AmbientLight(_utilsConfig2['default'].lights.ambient.color);
+
+				//// ADD OBJECTS TO SCENE
+				this.scene.add(this.ambient);
+
+				//// ADD CANVAS TO DOM
+				this.container.appendChild(this.renderer.domElement);
+
+				this.onResize();
+
+				//// REGIST RENDERER
+				_utilsRaf2['default'].register(this.render);
+				_utilsRaf2['default'].start();
+
+				window.addEventListener('resize', this.onResize);
+				window.addEventListener('mousemove', this.onMove);
+				window.addEventListener('click', this.onClick);
+		},
+
+		setFaceColor: function setFaceColor(face) {},
+
+		onClick: function onClick(event) {},
+
+		onMove: function onMove(event) {
+				this.cameraPos.x = event.clientX - this.halfWidth;
+				this.cameraPos.y = event.clientY - this.halfHeight;
+		},
+
+		onResize: function onResize() {
+				this.container.width = this.container.offsetWidth;
+				this.container.height = this.container.offsetHeight;
+
+				this.renderer.setSize(window.innerWidth, window.innerHeight);
+				this.ratio = window.innerWidth / window.innerHeight;
+
+				this.halfWidth = window.innerWidth * .5;
+				this.halfHeight = window.innerHeight * .5;
+		},
+
+		render: function render() {
+				this.currentCameraPos.x += (this.cameraPos.x * .7 - this.currentCameraPos.x) * 0.01;
+				this.currentCameraPos.y += (this.cameraPos.y * .8 - this.currentCameraPos.y) * 0.01;
+
+				this.camera.position.set(this.currentCameraPos.x, this.currentCameraPos.y, this.currentCameraPos.z);
+				this.camera.lookAt(_utilsConfig2['default'].camera.target);
+
+				this.renderer.render(this.scene, this.camera);
+		},
+
+		createGeometries: function createGeometries() {
+				for (var i = 0; i < _utilsConfig2['default'].fur.number; i++) {
+						var randomPoint = new _RandomPoint2['default']();
+
+						var geometry = new THREE.PlaneGeometry(_utilsConfig2['default'].fur.width, _utilsConfig2['default'].fur.length, 1, _utilsConfig2['default'].fur.segments);
+						var material = new THREE.MeshBasicMaterial({ color: randomPoint.color, side: THREE.DoubleSide });
+						var mesh = new THREE.Mesh(geometry, material);
+
+						mesh.position.set(randomPoint.position.x, randomPoint.position.y, randomPoint.position.z);
+						// mesh.rotation.x = randomPoint.angle.x;
+						// mesh.rotation.z = randomPoint.angle.y;
+						mesh.geometry.applyMatrix(new THREE.Matrix4().makeRotationX(randomPoint.angle.x));
+						mesh.geometry.applyMatrix(new THREE.Matrix4().makeRotationZ(randomPoint.angle.y));
+
+						this.scene.add(mesh);
+
+						this.meshes.push(mesh);
+				}
 		}
-
-		//// RENDERER
-		this.renderer = new THREE.WebGLRenderer({ antialias: true });
-		this.renderer.setClearColor(_utilsConfig2['default'].canvas.color, 1.0);
-		this.renderer.setSize(window.innerWidth, window.innerHeight);
-
-		//// AMBIANT LIGHT
-		this.ambient = new THREE.AmbientLight(_utilsConfig2['default'].lights.ambient.color);
-
-		//// ADD OBJECTS TO SCENE
-		this.scene.add(this.ambient);
-
-		//// ADD CANVAS TO DOM
-		this.container.appendChild(this.renderer.domElement);
-
-		this.onResize();
-
-		//// REGIST RENDERER
-		_utilsRaf2['default'].register(this.render);
-		_utilsRaf2['default'].start();
-
-		window.addEventListener('resize', this.onResize);
-		window.addEventListener('mousemove', this.onMove);
-		window.addEventListener('click', this.onClick);
-	},
-
-	setFaceColor: function setFaceColor(face) {},
-
-	onClick: function onClick(event) {},
-
-	onMove: function onMove(event) {},
-
-	onResize: function onResize() {
-		this.container.width = this.container.offsetWidth;
-		this.container.height = this.container.offsetHeight;
-
-		this.renderer.setSize(window.innerWidth, window.innerHeight);
-		this.ratio = window.innerWidth / window.innerHeight;
-
-		this.halfWidth = window.innerWidth * .5;
-		this.halfHeight = window.innerHeight * .5;
-	},
-
-	render: function render() {
-		this.renderer.render(this.scene, this.camera);
-	},
-
-	createGeometries: function createGeometries() {
-		for (var i = 0; i < _utilsConfig2['default'].fur.number; i++) {
-			var geometry = new THREE.PlaneBufferGeometry(_utilsConfig2['default'].fur.width, _utilsConfig2['default'].fur.length, 1, _utilsConfig2['default'].fur.segments);
-			var material = new THREE.MeshBasicMaterial({ color: 0xffff00, side: THREE.DoubleSide });
-			var mesh = new THREE.Mesh(geometry, material);
-			var position = new _RandomPoint2['default']();
-
-			mesh.position.set(position.x, position.y, position.z);
-		}
-	}
 };
 
-},{"../utils/config":"/Users/tommy.cornilleau/Desktop/TEMP/fur-ball/src/scripts/utils/config.js","../utils/getIntersectionMouse":"/Users/tommy.cornilleau/Desktop/TEMP/fur-ball/src/scripts/utils/getIntersectionMouse.js","../utils/mapper":"/Users/tommy.cornilleau/Desktop/TEMP/fur-ball/src/scripts/utils/mapper.js","../utils/raf":"/Users/tommy.cornilleau/Desktop/TEMP/fur-ball/src/scripts/utils/raf.js","./RandomPoint":"/Users/tommy.cornilleau/Desktop/TEMP/fur-ball/src/scripts/components/RandomPoint.js","three":"/Users/tommy.cornilleau/Desktop/TEMP/fur-ball/node_modules/three/build/three.js"}],"/Users/tommy.cornilleau/Desktop/TEMP/fur-ball/src/scripts/initialize.js":[function(require,module,exports){
+},{"../utils/config":"D:\\Documents\\git\\fur-ball\\src\\scripts\\utils\\config.js","../utils/getIntersectionMouse":"D:\\Documents\\git\\fur-ball\\src\\scripts\\utils\\getIntersectionMouse.js","../utils/mapper":"D:\\Documents\\git\\fur-ball\\src\\scripts\\utils\\mapper.js","../utils/raf":"D:\\Documents\\git\\fur-ball\\src\\scripts\\utils\\raf.js","./RandomPoint":"D:\\Documents\\git\\fur-ball\\src\\scripts\\components\\RandomPoint.js","three":"D:\\Documents\\git\\fur-ball\\node_modules\\three\\build\\three.js"}],"D:\\Documents\\git\\fur-ball\\src\\scripts\\initialize.js":[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -43501,7 +43527,7 @@ window.onload = function () {
 	_componentsScene2['default'].init();
 };
 
-},{"./components/scene":"/Users/tommy.cornilleau/Desktop/TEMP/fur-ball/src/scripts/components/scene.js"}],"/Users/tommy.cornilleau/Desktop/TEMP/fur-ball/src/scripts/utils/config.js":[function(require,module,exports){
+},{"./components/scene":"D:\\Documents\\git\\fur-ball\\src\\scripts\\components\\scene.js"}],"D:\\Documents\\git\\fur-ball\\src\\scripts\\utils\\config.js":[function(require,module,exports){
 "use strict";
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj["default"] = obj; return newObj; } }
@@ -43518,7 +43544,7 @@ var config = {
 	},
 
 	camera: {
-		position: new THREE.Vector3(100, 100, 100),
+		position: new THREE.Vector3(0, 0, 60),
 		target: new THREE.Vector3(0, 0, 0)
 	},
 
@@ -43526,14 +43552,14 @@ var config = {
 
 	lights: {
 		ambient: {
-			color: 0x333333
+			color: 0xffffff
 		}
 	},
 
 	fur: {
-		number: 10,
-		length: 10,
-		width: 2,
+		number: 100,
+		length: 2,
+		width: .5,
 		segments: 3
 	},
 
@@ -43546,7 +43572,7 @@ var config = {
 
 module.exports = config;
 
-},{"three":"/Users/tommy.cornilleau/Desktop/TEMP/fur-ball/node_modules/three/build/three.js"}],"/Users/tommy.cornilleau/Desktop/TEMP/fur-ball/src/scripts/utils/getIntersectionMouse.js":[function(require,module,exports){
+},{"three":"D:\\Documents\\git\\fur-ball\\node_modules\\three\\build\\three.js"}],"D:\\Documents\\git\\fur-ball\\src\\scripts\\utils\\getIntersectionMouse.js":[function(require,module,exports){
 "use strict";
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj["default"] = obj; return newObj; } }
@@ -43575,7 +43601,7 @@ function getIntersectionMouse(event, mesh, camera) {
 
 module.exports = getIntersectionMouse;
 
-},{"three":"/Users/tommy.cornilleau/Desktop/TEMP/fur-ball/node_modules/three/build/three.js"}],"/Users/tommy.cornilleau/Desktop/TEMP/fur-ball/src/scripts/utils/mapper.js":[function(require,module,exports){
+},{"three":"D:\\Documents\\git\\fur-ball\\node_modules\\three\\build\\three.js"}],"D:\\Documents\\git\\fur-ball\\src\\scripts\\utils\\mapper.js":[function(require,module,exports){
 // https://github.com/tommycor/mapperJS/blob/master/mapper-min.js
 "use strict";
 
@@ -43585,7 +43611,7 @@ function mapper(val, oMin, oMax, nMin, nMax) {
 
 module.exports = mapper;
 
-},{}],"/Users/tommy.cornilleau/Desktop/TEMP/fur-ball/src/scripts/utils/raf.js":[function(require,module,exports){
+},{}],"D:\\Documents\\git\\fur-ball\\src\\scripts\\utils\\raf.js":[function(require,module,exports){
 'use strict';
 
 function Raf() {
@@ -43634,6 +43660,6 @@ Raf.prototype.control = function (event) {
 
 module.exports = new Raf();
 
-},{}]},{},["/Users/tommy.cornilleau/Desktop/TEMP/fur-ball/src/scripts/initialize.js"])
+},{}]},{},["D:\\Documents\\git\\fur-ball\\src\\scripts\\initialize.js"])
 
 //# sourceMappingURL=bundle.js.map

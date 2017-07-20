@@ -19,12 +19,13 @@ module.exports = {
 		
 		this.scene 	   			= new THREE.Scene();
 		this.container 			= config.canvas.element;
+		this.meshes 			= new Array();
 
-		this.camera 		   = new THREE.PerspectiveCamera(45, this.ratio, 15, 3000);
-		this.camera.position.x = config.camera.position.x;
-		this.camera.position.y = config.camera.position.y;
-		this.camera.position.z = config.camera.position.z;
-		this.camera.lookAt(config.camera.target);
+		this.camera 		   	= new THREE.PerspectiveCamera(45, this.ratio, 15, 3000);
+		this.camera.position.x 	= config.camera.position.x;
+		this.camera.position.y 	= config.camera.position.y;
+		this.camera.position.z 	= config.camera.position.z;
+		this.camera.lookAt( config.camera.target );
 
 		this.createGeometries();
 
@@ -66,6 +67,8 @@ module.exports = {
 	},
 
 	onMove: function( event ) {
+		this.cameraPos.x = event.clientX - this.halfWidth;
+		this.cameraPos.y = event.clientY - this.halfHeight;
 	},
 
 	onResize: function() {
@@ -80,17 +83,32 @@ module.exports = {
 	},
 
 	render: function() {
+		this.currentCameraPos.x += ( ( this.cameraPos.x * .7) - this.currentCameraPos.x ) * 0.01;
+		this.currentCameraPos.y += ( ( this.cameraPos.y * .8) - this.currentCameraPos.y ) * 0.01;
+
+		this.camera.position.set( this.currentCameraPos.x, this.currentCameraPos.y, this.currentCameraPos.z );
+		this.camera.lookAt(config.camera.target);
+
 		this.renderer.render(this.scene, this.camera);
 	},
 
 	createGeometries: function() {
 		for( let i = 0 ; i < config.fur.number ; i++ ) {
-			let geometry = new THREE.PlaneBufferGeometry( config.fur.width, config.fur.length, 1, config.fur.segments );
-			let material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
-			let mesh 	 = new THREE.Mesh( geometry, material );
-			let position = new RandomPoint();
+			let randomPoint = new RandomPoint();
 
-			mesh.position.set( position.x, position.y, position.z );
+			let geometry = new THREE.PlaneGeometry( config.fur.width, config.fur.length, 1, config.fur.segments );
+			let material = new THREE.MeshBasicMaterial( {color: randomPoint.color, side: THREE.DoubleSide} );
+			let mesh 	 = new THREE.Mesh( geometry, material );
+
+			mesh.position.set( randomPoint.position.x, randomPoint.position.y, randomPoint.position.z );
+			// mesh.rotation.x = randomPoint.angle.x;
+			// mesh.rotation.z = randomPoint.angle.y;
+			mesh.geometry.applyMatrix( new THREE.Matrix4().makeRotationX( randomPoint.angle.x ) );
+			mesh.geometry.applyMatrix( new THREE.Matrix4().makeRotationZ( randomPoint.angle.y ) );
+
+			this.scene.add( mesh );
+
+			this.meshes.push( mesh );
 		}
 	}
 };

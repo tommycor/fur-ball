@@ -8,7 +8,7 @@ var config = {
 	},
 
 	camera: {
-		position : new THREE.Vector3(100, 100, 100),
+		position : new THREE.Vector3(0, 0, 60),
 		target : new THREE.Vector3(0, 0, 0)
 	},
 
@@ -16,14 +16,14 @@ var config = {
 	
 	lights: {
 		ambient: {
-			color : 0x333333
+			color : 0xffffff
 		},
 	},
 
 	fur: {
-		number: 10,
-		length: 10,
-		width: 2,
+		number: 100,
+		length: 2,
+		width: .5,
 		segments: 3
 	},
 

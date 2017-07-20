@@ -19,7 +19,6 @@ var uglify       = require('gulp-uglify');
 var notify       = require("gulp-notify");
 var watchify     = require('watchify');
 var stringify    = require('stringify');
-var vueify 		 = require('vueify');
 
 
 var config  = {
